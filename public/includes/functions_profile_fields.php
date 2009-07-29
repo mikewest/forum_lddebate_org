@@ -416,6 +416,13 @@ class custom_profile
 					continue;
 				}
 
+                if ( $ident === 'twitter' ) {
+                    $value = sprintf(
+                                '<a href="http://twitter.com/%1$s">%1$s</a>',
+                                trim( $value, "@ \t\n\r\0\x0B" )
+                            );
+                }
+
 				$tpl_fields['row'] += array(
 					'PROFILE_' . strtoupper($ident) . '_VALUE'	=> $value,
 					'PROFILE_' . strtoupper($ident) . '_TYPE'	=> $ident_ary['data']['field_type'],
