@@ -241,7 +241,8 @@ switch ($mode)
 			get_user_rank($row['user_rank'], (($row['user_id'] == ANONYMOUS) ? false : $row['user_posts']), $rank_title, $rank_img, $rank_img_src);
 
 			$template->assign_block_vars($which_row, array(
-				'USER_ID'		=> $row['user_id'],
+                'USER_ID'		=> $row['user_id'],
+                'FAKE_ID'       => ( $row['user_id'] > 51 ) ? $row['user_id'] - 52 : '&#8734;',
 				'FORUMS'		=> $s_forum_select,
 				'RANK_TITLE'	=> $rank_title,
 				'GROUP_NAME'	=> $group_name,
@@ -1339,7 +1340,7 @@ switch ($mode)
 				'JOINED'	=> implode('-', $joined),
 				'ACTIVE'	=> implode('-', $active),
 				'COUNT'		=> $count,
-				'IP'		=> $ipdomain,
+                'IP'		=> $ipdomain,
 
 				'S_IP_SEARCH_ALLOWED'	=> ($auth->acl_getf_global('m_info')) ? true : false,
 				'S_EMAIL_SEARCH_ALLOWED'=> ($auth->acl_get('a_user')) ? true : false,
@@ -1599,7 +1600,8 @@ function show_profile($data)
 	// Dump it out to the template
 	return array(
 		'AGE'			=> $age,
-		'RANK_TITLE'	=> $rank_title,
+        'RANK_TITLE'	=> $rank_title,
+        'FAKE_ID'   => ( $user_id > 51 ) ? $user_id - 52 : '&#8734;',
 		'JOINED'		=> $user->format_date($data['user_regdate']),
 		'VISITED'		=> (empty($last_visit)) ? ' - ' : $user->format_date($last_visit),
 		'POSTS'			=> ($data['user_posts']) ? $data['user_posts'] : 0,

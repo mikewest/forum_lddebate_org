@@ -29,6 +29,7 @@ $post_id	= request_var('p', 0);
 $voted_id	= request_var('vote_id', array('' => 0));
 
 $start		= request_var('start', 0);
+$id_in_thread = $start + 1;
 $view		= request_var('view', '');
 
 $default_sort_days	= (!empty($user->data['user_post_show_days'])) ? $user->data['user_post_show_days'] : 0;
@@ -1465,8 +1466,10 @@ for ($i = 0, $end = sizeof($post_list); $i < $end; ++$i)
 		'U_NOTES'			=> ($auth->acl_getf_global('m_')) ? append_sid("{$phpbb_root_path}mcp.$phpEx", 'i=notes&amp;mode=user_notes&amp;u=' . $poster_id, true, $user->session_id) : '',
 		'U_WARN'			=> ($auth->acl_get('m_warn') && $poster_id != $user->data['user_id'] && $poster_id != ANONYMOUS) ? append_sid("{$phpbb_root_path}mcp.$phpEx", 'i=warn&amp;mode=warn_post&amp;f=' . $forum_id . '&amp;p=' . $row['post_id'], true, $user->session_id) : '',
 
-		'POST_ID'			=> $row['post_id'],
-		'POSTER_ID'			=> $poster_id,
+        'POST_ID'			=> $row['post_id'],
+        'ID_IN_THREAD'      => $id_in_thread++,
+        'POSTER_ID'			=> $poster_id,
+        'FAKED_ID'          => ( $poster_id > 50 ) ? $poster_id - 52 : '&#8734;',
 
 		'S_HAS_ATTACHMENTS'	=> (!empty($attachments[$row['post_id']])) ? true : false,
 		'S_POST_UNAPPROVED'	=> ($row['post_approved']) ? false : true,
