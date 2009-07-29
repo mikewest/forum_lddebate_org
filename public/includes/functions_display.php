@@ -374,7 +374,7 @@ function display_forums($root_data = '', $display_moderators = true, $return_mod
 		// Create last post link information, if appropriate
 		if ($row['forum_last_post_id'])
 		{
-			$last_post_subject = $row['forum_last_post_subject'];
+			$last_post_subject = censor_text($row['forum_last_post_subject']);
 			$last_post_time = $user->format_date($row['forum_last_post_time']);
 			$last_post_url = append_sid("{$phpbb_root_path}viewtopic.$phpEx", 'f=' . $row['forum_id_last_post'] . '&amp;p=' . $row['forum_last_post_id']) . '#p' . $row['forum_last_post_id'];
 		}
@@ -439,7 +439,8 @@ function display_forums($root_data = '', $display_moderators = true, $return_mod
 			'FORUM_FOLDER_IMG_ALT'	=> isset($user->lang[$folder_alt]) ? $user->lang[$folder_alt] : '',
 			'FORUM_IMAGE'			=> ($row['forum_image']) ? '<img src="' . $phpbb_root_path . $row['forum_image'] . '" alt="' . $user->lang[$folder_alt] . '" />' : '',
 			'FORUM_IMAGE_SRC'		=> ($row['forum_image']) ? $phpbb_root_path . $row['forum_image'] : '',
-			'LAST_POST_SUBJECT'		=> censor_text($last_post_subject),
+            'LAST_POST_SUBJECT'		=> $last_post_subject,
+            'LAST_POST_SHORTENED_SUBJECT' => (utf8_strlen($last_post_subject) > 26) ? truncate_string($last_post_subject, 25) . "\xE2\x80\xA6" : $last_post_subject,
 			'LAST_POST_TIME'		=> $last_post_time,
 			'LAST_POSTER'			=> get_username_string('username', $row['forum_last_poster_id'], $row['forum_last_poster_name'], $row['forum_last_poster_colour']),
 			'LAST_POSTER_COLOUR'	=> get_username_string('colour', $row['forum_last_poster_id'], $row['forum_last_poster_name'], $row['forum_last_poster_colour']),
