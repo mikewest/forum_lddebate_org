@@ -37,7 +37,32 @@ if (empty($lang) || !is_array($lang))
 
 // Privacy policy and T&C
 $lang = array_merge($lang, array(
-	'TERMS_OF_USE_CONTENT'	=> 'By accessing “%1$s” (hereinafter “we”, “us”, “our”, “%1$s”, “%2$s”), you agree to be legally bound by the following terms. If you do not agree to be legally bound by all of the following terms then please do not access and/or use “%1$s”. We may change these at any time and we’ll do our utmost in informing you, though it would be prudent to review this regularly yourself as your continued usage of “%1$s” after changes mean you agree to be legally bound by these terms as they are updated and/or amended.<br />
+    'TERMS_OF_USE_CONTENT'	=> 'Let&#x27;s be honest, you&#x27;re not going to read the legalese below.  But it&#x27;s important that you have some idea of what we&#x27;re doing here, so these are the highlights:</p>
+
+    <p><strong>Ownership</strong></p>
+<ul>
+  <li><p>While you retain <em>ownership</em> of each post you make to the site, you grant permission to use those posts under the Creative Commons <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">&quot;Attribution-Noncommercial-No Derivative Works 3.0 United States&quot;</a> license.  In a nutshell, this means that others can make use of the comments you post for non-commercial purposes, without modification, as long as they attribute the words to you (by linking to the original post, for instance).  They don&#x27;t have to ask your permission to do this.</p><p>Commercial use, however, requires your permission.  This specifically means that commercial entities (camps, handbooks, topic analysis, etc.) need to ask your permission before using your words to advertise themselves (or selling your analysis, etc.), and you&#x27;re free to set whatever terms you like for that permission.</p></li>
+</ul>
+
+<p><strong>Moderation and Anonymity</strong></p>
+<ul>
+  <li><p><em>You</em>, obviously, are terribly mature, thick-skinned, and can take pretty much anything the internet can dish out.  Still, we&#x27;d like to keep it clean here.  We have moderators in most forums, and they are tasked with tamping down abusive behavior, and guiding discussion in productive directions.  Please don&#x27;t be offended (or surprised) if your carefully crafted ad hom is removed without warning.</p></li>
+  <li><p>We are an exclusive voluntary association.  If you refuse to play by the rules the mods lay out, we will refuse to allow you to post on the site.  Moreover, we reserve the right to flat out deny you access to the site.</p></li>
+  <li><p>We very much prefer non-anonymous accounts.  We want to have real conversations with real <em>people</em>; we specifically don&#x27;t want to become 4chan.  You have literally millions of places on the web to rant anonymously about anything and everything &mdash; this is not one of them.</p><p>If you register anonymously, don&#x27;t be surprised if your posts are slightly more scrutinized than others.  The threshold for suspension/deletion is simply lower if you&#x27;re not willing to put your name behind your words.</p></li>
+</ul>
+
+<p><strong>IP Addresses</strong></p>
+<ul>
+  <li><p>We collect somewhat personally identifiable information, and store it for arbitrary periods of time.  Specifically, we track IP addresses, and associate them with every action and post on the site in order to give ourselves tool with which to prevent abuse.</p></li>
+  <li><p>The forum software we use sets a cookie in your browser to keep you logged in.  You can block that in your browser if you don&#x27;t care for the functionality.</p></li>
+  <li><p>We use <a href="http://www.google.com/analytics/">Google Analytics</a> to keep track of traffic patterns on the site.  This means that Google gets a peek at those traffic patterns as well, and set a single cookie in your browser.</p></li>
+</ul>
+
+<p>And now&hellip;</p>
+<h2>The Legalese</h2>
+<p>
+    
+By accessing “%1$s” (hereinafter “we”, “us”, “our”, “%1$s”, “%2$s”), you agree to be legally bound by the following terms. If you do not agree to be legally bound by all of the following terms then please do not access and/or use “%1$s”. We may change these at any time and we’ll do our utmost in informing you, though it would be prudent to review this regularly yourself as your continued usage of “%1$s” after changes mean you agree to be legally bound by these terms as they are updated and/or amended.<br />
 	<br />
 	Our forums are powered by phpBB (hereinafter “they”, “them”, “their”, “phpBB software”, “www.phpbb.com”, “phpBB Group”, “phpBB Teams”) which is a bulletin board solution released under the “<a href="http://opensource.org/licenses/gpl-license.php">General Public License</a>” (hereinafter “GPL”) and can be downloaded from <a href="http://www.phpbb.com/">www.phpbb.com</a>. The phpBB software only facilitates internet based discussions, the phpBB Group are not responsible for what we allow and/or disallow as permissible content and/or conduct. For further information about phpBB, please see: <a href="http://www.phpbb.com/">http://www.phpbb.com/</a>.<br />
 	<br />
