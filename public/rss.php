@@ -18,15 +18,18 @@ require($phpbb_root_path . 'config.' . $phpEx);
 require($phpbb_root_path . 'includes/constants.' . $phpEx);
 require($phpbb_root_path . 'includes/db/' . $dbms . '.' . $phpEx);
 include($phpbb_root_path . 'includes/bbcode.' . $phpEx);
-
+require($phpbb_root_path . 'includes/functions_content.' . $phpEx);
 $db                     = new $sql_db();
+$bbcode			        = new bbcode();
+
+class fake {}
+
+$user = new fake();
+$user->theme = array( 'template_path' => 'LDDebate' );
 
 // Connect to DB
 $db->sql_connect($dbhost, $dbuser, $dbpasswd, $dbname, $dbport, false, defined('PHPBB_DB_NEW_LINK') ? PHPBB_DB_NEW_LINK : false);
 unset($dbpasswd);
-
-
-
 
 // Initial var setup
 $forum_id   = intval( $_GET['f'], 10 );
@@ -53,9 +56,13 @@ if ( !empty( $topic_id ) ) {
             `p`.`enable_bbcode`,
             `p`.`enable_smilies`,
             `p`.`enable_magic_url`,
+            `p`.`bbcode_bitfield`,
+            `p`.`bbcode_uid`,
             `p`.`enable_sig`,
             `u`.`username`,
-            `u`.`user_sig`
+            `u`.`user_sig`,
+            `u`.`user_sig_bbcode_uid`,
+            `u`.`user_sig_bbcode_bitfield`
         FROM
             `$POSTS_TABLE` `p`
             JOIN `$USER_TABLE` `u`
@@ -75,13 +82,20 @@ SQL;
     while ( $row = $db->sql_fetchrow( $result ) ) {
         $maxtime    =   max( $maxtime, $row[ 'post_time' ] );
         $title      =   empty( $title ) ? $row[ 'post_subject' ] : $title;
+        $bbcode->bbcode_second_pass( $row[ 'post_text' ],  $row[ 'bbcode_uid' ], $row[ 'bbcode_bitfield' ] );
+        $bbcode->bbcode_second_pass( $row[ 'user_sig' ],  $row[ 'user_sig_bbcode_uid' ], $row[ 'user_sig_bbcode_bitfield' ] );
+
         $entries[] = array(
             'POST_ID'   =>  $row[ 'post_id' ],
             'POST_TIME' =>  strftime( '%Y-%m-%dT%H:%M:%SZ', $row[ 'post_time' ] ),
             'USERNAME'  =>  $row[ 'username' ],
             'USER_SIG'  =>  ( $row[ 'enable_sig' ] ? $row[ 'user_sig' ] : '' ),
             'SUBJECT'   =>  $row[ 'post_subject' ],
-            'TEXT'      =>  $row[ 'post_text' ],
+            'TEXT'      =>  str_replace(
+                                '{SMILIES_PATH}',
+                                'http://forum.lddebate.org/images/smilies',
+                                $row[ 'post_text' ] . '<hr />' . $row[ 'user_sig' ]
+                            ),
             'URL'       =>  sprintf(
                                 'http://forum.lddebate.org/viewtopic.php?f=%1$d&p=%2$d#p%2$d',
                                 $row[ 'forum_id' ], $row[ 'post_id' ]
@@ -92,7 +106,7 @@ SQL;
 }
 
 /* Print results */
-header( 'Content-type: text/xml' );
+header( 'Content-type: text/plain' );
 $title      = "&ldquo;$title&rdquo; &mdash; forum.lddebate.org";
 $maxtime    = strftime( '%Y-%m-%dT%H:%M:%SZ', $maxtime );
 print <<<XML
@@ -104,7 +118,7 @@ print <<<XML
     <author> 
         <name>LDDebate.org</name>
     </author> 
-    <id><!-- RSS_URL --></id>
+    <id>$rssurl</id>
 XML;
 
 foreach ( $entries as $entry ) {
