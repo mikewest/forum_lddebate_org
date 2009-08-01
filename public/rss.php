@@ -22,7 +22,9 @@ require($phpbb_root_path . 'includes/functions_content.' . $phpEx);
 $db                     = new $sql_db();
 $bbcode			        = new bbcode();
 
-class fake {}
+class fake {
+    function optionget( $x ) { return FALSE; }
+}
 
 $user = new fake();
 $user->theme = array( 'template_path' => 'LDDebate' );
@@ -37,8 +39,10 @@ $topic_id   = intval( $_GET['t'], 10 );
 $start      = 0;
 
 
-$POSTS_TABLE = POSTS_TABLE;
-$USER_TABLE  = USERS_TABLE;
+$POSTS_TABLE    = POSTS_TABLE;
+$USER_TABLE     = USERS_TABLE;
+$TOPICS_TABLE   = TOPICS_TABLE;
+$FORUMS_TABLE   = FORUMS_TABLE;
 
 $entries    = array();
 
@@ -81,7 +85,9 @@ SQL;
     $rssurl     = "http://forum.lddebate.org/rss.php?t={$topic_id}";
     while ( $row = $db->sql_fetchrow( $result ) ) {
         $maxtime    =   max( $maxtime, $row[ 'post_time' ] );
-        $title      =   empty( $title ) ? $row[ 'post_subject' ] : $title;
+        if ( empty( $title ) ) {
+            $title = "“{$row[ 'post_subject' ]}” — forum.lddebate.org thread feed";
+        }
         $bbcode->bbcode_second_pass( $row[ 'post_text' ],  $row[ 'bbcode_uid' ], $row[ 'bbcode_bitfield' ] );
         $bbcode->bbcode_second_pass( $row[ 'user_sig' ],  $row[ 'user_sig_bbcode_uid' ], $row[ 'user_sig_bbcode_bitfield' ] );
 
@@ -97,21 +103,71 @@ SQL;
                                 $row[ 'post_text' ] . '<hr />' . $row[ 'user_sig' ]
                             ),
             'URL'       =>  sprintf(
-                                'http://forum.lddebate.org/viewtopic.php?f=%1$d&p=%2$d#p%2$d',
+                                'http://forum.lddebate.org/viewtopic.php?f=%1$d&amp;p=%2$d#p%2$d',
                                 $row[ 'forum_id' ], $row[ 'post_id' ]
                             )
         );
     }
     $db->sql_freeresult( $result );
+} elseif ( !empty( $forum_id ) ) {
+    // Forum Feed
+
+    // Retrieve the last 25 threads in the forum:
+    $sql = <<<SQL
+        SELECT
+          `t`.`forum_id`,
+          `f`.`forum_name`,
+          `t`.`topic_title`,
+          `t`.`topic_first_poster_name` as `topic_poster_username`,
+          `t`.`topic_last_post_id`  AS `last_post_id`,
+          `t`.`topic_last_post_time`  AS `last_post_time`,
+          `t`.`topic_last_poster_name` as `last_poster_username`
+        FROM
+          `{$TOPICS_TABLE}` `t`
+          JOIN
+            `{$FORUMS_TABLE}` `f`
+            ON `t`.`forum_id` = `f`.`forum_id`
+        WHERE
+          `t`.`forum_id` = {$forum_id}
+        ORDER BY
+          `t`.`topic_last_post_time` DESC
+SQL;
+    $result = $db->sql_query_limit( $sql, 25 );
+
+    $title      = '';
+    $maxtime    = 0;
+    $url        = "http://forum.lddebate.org/viewtopic.php?f={$forum_id}";
+    $rssurl     = "http://forum.lddebate.org/rss.php?f={$forum_id}";
+    while ( $row = $db->sql_fetchrow( $result ) ) {
+        $maxtime    = max( $maxtime, $row[ 'last_post_time' ] );
+        $title      = "“{$row[ 'forum_name' ]}” — forum.lddebate.org forum feed";
+        $entries[]  = array(
+            'POST_ID'   =>  $row[ 'last_post_id' ],
+            'POST_TIME' =>  strftime( '%Y-%m-%dT%H:%M:%SZ', $row[ 'last_post_time' ] ),
+            'USERNAME'  =>  $row[ 'topic_poster_username' ],
+            'SUBJECT'   =>  $row[ 'topic_title' ],
+            'TEXT'      =>  'Last post: ' . strftime( '%Y-%m-%d at %H:%M GMT', $row[ 'last_post_time' ] ) . ' by ' . $row[ 'last_poster_username' ],
+            'URL'       =>  sprintf(
+                                'http://forum.lddebate.org/viewtopic.php?f=%1$d&amp;p=%2$d#p%2$d',
+                                $row[ 'forum_id' ], $row[ 'last_post_id' ]
+                            )
+
+        );
+    }
+}
+
+if ( empty( $entries ) ) {
+    header( "HTTP/1.1 404 Not Found" );
+    exit();
 }
 
 /* Print results */
-header( 'Content-type: text/plain' );
-$title      = "&ldquo;$title&rdquo; &mdash; forum.lddebate.org";
+header( 'Content-type: application/atom+xml; charset=utf-8' );
+// header( 'Content-type: text/plain; charset=utf-8' );
 $maxtime    = strftime( '%Y-%m-%dT%H:%M:%SZ', $maxtime );
 print <<<XML
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <title>$title</title> 
+    <title type="html">$title</title> 
     <link href="$url" />
     <link href="$rssurl" rel="self" />
     <updated>$maxtime</updated>
@@ -124,11 +180,11 @@ XML;
 foreach ( $entries as $entry ) {
     print <<<XML
     <entry>
-        <title type="html">&ldquo;{$entry[ 'SUBJECT' ]}&rdquo; &mdash; {$entry[ 'USERNAME' ]}</title>
+        <title type="html">“{$entry[ 'SUBJECT' ]}” — {$entry[ 'USERNAME' ]}</title>
         <link href="{$entry[ 'URL' ]}"/>
         <id>{$entry[ 'URL' ]}</id>
         <updated>{$entry[ 'POST_TIME' ]}</updated>
-        <summary type="html">{$entry[ 'TEXT' ]}</summary>
+        <content type="html"><![CDATA[{$entry[ 'TEXT' ]}]]></content>
     </entry>
 XML;
 }
