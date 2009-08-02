@@ -17,4 +17,19 @@ class clsMem extends Memcache {
         }
         return self::$m_objMem;
     }
+    static function cache_or_get($cachekey, $create_item_func, $timeout=600){
+        if ($cacheitem = clsMem::getMem()->get($cachekey) ) {
+            return $cacheitem;
+        }
+        else {
+            $cacheitem = $create_item_func();
+            if (clsMem::getMem()->set($cachekey, $cacheitem, false, $timeout) ) {
+                return $cacheitem;
+            }
+            else {
+                //maybe we should log something here, or send an email to an administrator
+                return $cacheitem;
+            }
+        }
+    }
 }
