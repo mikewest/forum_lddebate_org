@@ -36,6 +36,13 @@
 <link href="{T_THEME_PATH}/medium.css" rel="alternate stylesheet" type="text/css" title="A+" />
 <link href="{T_THEME_PATH}/large.css" rel="alternate stylesheet" type="text/css" title="A++" />
 
+<!-- IF FORUM_ID -->
+<link rel="alternate" type="application/atom+xml" href="/rss.php?f={FORUM_ID}" title="{FORUM_TITLE} Forum Feed" />
+<!-- ENDIF -->
+<!-- IF TOPIC_ID -->
+<link rel="alternate" type="application/atom+xml" href="/rss.php?t={TOPIC_ID}" title="{TOPIC_TITLE} Topic Feed" />
+<!-- ENDIF -->
+
 <!-- IF S_CONTENT_DIRECTION eq 'rtl' -->
 	<link href="{T_THEME_PATH}/bidi.css" rel="stylesheet" type="text/css" media="screen, projection" />
 <!-- ENDIF -->
@@ -49,7 +56,6 @@
 	<div id="page-header">
 		<div class="headerbar">
 			<div class="inner"><span class="corners-top"><span></span></span>
-
 			<div id="site-description">
                 <h1><a href="/"><img src="http://forum.lddebate.org/styles/LDDebate/imageset/ld.png" width="278" height="80" alt="{SITENAME}" /></a></h1>
 				<p class="skiplink"><a href="#start_here">{L_SKIP}</a></p>
