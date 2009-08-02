@@ -163,7 +163,8 @@ if ( empty( $entries ) ) {
 
 /* Print results */
 header( 'Content-type: application/atom+xml; charset=utf-8' );
-// header( 'Content-type: text/plain; charset=utf-8' );
+header( 'Cache-Control: max-age=1800' );
+header( 'Last-Modified: ' . strftime( '%a, %d %b %Y %H:%M:%S GMT', $maxtime ) );
 $maxtime    = strftime( '%Y-%m-%dT%H:%M:%SZ', $maxtime );
 print <<<XML
 <feed xmlns="http://www.w3.org/2005/Atom">
