@@ -200,7 +200,7 @@ $forum_id   = intval( ( empty( $_GET['f'] ) ? '' : $_GET['f'] ), 10 );
 $topic_id   = intval( ( empty( $_GET['t'] ) ? '' : $_GET['t'] ), 10 );
 
 if ( $topic_id || $forum_id ) {
-    $data = clsMem::cache_or_get( "rss_topic_{$topic_id}_forum_{$forum_id}", 'getRSS', 1 );
+    $data = clsMem::cache_or_get( "rss_topic_{$topic_id}_forum_{$forum_id}", 'getRSS', 60*5 );
 
     if ( $data[ 'maxtime' ] ) {
         header( 'Content-type: application/atom+xml; charset=utf-8' );
